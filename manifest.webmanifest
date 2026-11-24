@@ -1,0 +1,20 @@
+{
+  "id": "/",
+  "name": "RoomPlan — Personal Space Planner",
+  "short_name": "RoomPlan",
+  "description": "Plan your room, organize your essentials, and make your space yours.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f3f1eb",
+  "theme_color": "#344f3c",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
