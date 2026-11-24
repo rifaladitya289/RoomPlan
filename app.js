@@ -31,3 +31,21 @@ function exportData(){const blob=new Blob([JSON.stringify({...data,exportedAt:ne
 function importData(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const incoming=JSON.parse(reader.result);if(!incoming||!Array.isArray(incoming.items)||typeof incoming.budget!=="number")throw Error();data={...defaults,...incoming,items:incoming.items};save();render();toast("Backup restored")}catch{toast("That backup file is not valid RoomPlan data")}e.target.value=""};reader.readAsText(file)}
 document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.page)));
 if(localStorage.getItem(THEME)==="dark")document.body.classList.add("dark");$("#themeToggle").textContent=document.body.classList.contains("dark")?"☾":"☼";$("#today").textContent=new Date().toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});go("overview");
+
+// Progressive Web App: offline shell and install prompt.
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
+}
+let roomPlanInstallPrompt = null;
+const installButton = document.querySelector("#installApp");
+window.addEventListener("beforeinstallprompt", event => {
+  event.preventDefault(); roomPlanInstallPrompt = event;
+  if (installButton) installButton.hidden = false;
+});
+if (installButton) installButton.addEventListener("click", async () => {
+  if (!roomPlanInstallPrompt) { toast("Use your browser menu and choose Install app or Add to Home screen."); return; }
+  roomPlanInstallPrompt.prompt();
+  await roomPlanInstallPrompt.userChoice;
+  roomPlanInstallPrompt = null; installButton.hidden = true;
+});
+window.addEventListener("appinstalled", () => { if (installButton) installButton.hidden = true; toast("RoomPlan installed successfully"); });
